@@ -32,12 +32,24 @@ app.use((err, req, res, next) => {
 })
 
 
-const PORT = ENV.PORT || 5002;
+const startServer = async () => {
+    try {
+        await connectDB();
 
-app.listen(PORT, async () => {
-    await connectDB();
-    console.log(`Server is running on port ${PORT}`);
-});
+        // listen for local development
+        if (ENV.NODE_ENV !== "production") {//vercel dont want to run the port
+            app.listen(ENV.PORT, () => console.log("Server is up and running on PORT:", ENV.PORT));
+        }
+    } catch (error) {
+        console.error("Failed to start server:", error.message);
+        process.exit(1);
+    }
+};
 
+startServer();
+
+
+//export for vercel
+export default app;
 
 
